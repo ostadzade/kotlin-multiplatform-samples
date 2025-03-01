@@ -2,9 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches:
-      - main
-      - feature/*
+    branches: [main, feature/*]
   pull_request:
 
 concurrency:
@@ -35,6 +33,12 @@ jobs:
       - name: Build Release APK
         working-directory: ./Fruitties
         run: ./gradlew assembleRelease --stacktrace
+
+      - name: Find APK File
+        working-directory: ./Fruitties
+        run: |
+          echo "APK Path: $(pwd)/app/build/outputs/apk/release/"
+          ls -la app/build/outputs/apk/release/
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
