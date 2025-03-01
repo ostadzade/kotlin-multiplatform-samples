@@ -1,4 +1,4 @@
-name: Build Fruitties sample
+name: Build Fruitties Sample
 
 on:
   push:
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   build_android:
-    name: Build Android app
+    name: Build Android APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,15 +28,26 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Build app
+      - name: Grant Gradle Permissions
         working-directory: ./Fruitties
-        run: ./gradlew assemble --stacktrace
+        run: chmod +x gradlew
+
+      - name: Build Release APK
+        working-directory: ./Fruitties
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fruitties-Release.apk
+          path: Fruitties/app/build/outputs/apk/release/*.apk
 
   build_ios:
-    name: Build iOS app
+    name: Build iOS App
     runs-on: macos-latest
     steps:
-      - uses: maxim-lobanov/setup-xcode@v1
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
     
@@ -52,6 +63,6 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Build app
+      - name: Build iOS Project
         working-directory: ./Fruitties
         run: xcodebuild -project iosApp/iosApp.xcodeproj -configuration Debug -scheme iosApp -sdk iphonesimulator
