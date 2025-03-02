@@ -23,7 +23,6 @@ import com.example.fruitties.database.dbFileName
 import com.example.fruitties.network.FruittieApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
@@ -32,10 +31,9 @@ import platform.Foundation.NSUserDomainMask
 actual class Factory {
     actual fun createRoomDatabase(): AppDatabase {
         val dbFile = "${fileDirectory()}/$dbFileName"
-        return Room.databaseBuilder<AppDatabase>(
+        return Room.databaseBuilder(
             name = dbFile,
-        )
-            .setDriver(BundledSQLiteDriver())
+        ).setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }
