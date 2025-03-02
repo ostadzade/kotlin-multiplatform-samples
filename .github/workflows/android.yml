@@ -44,18 +44,22 @@ jobs:
         working-directory: ./Fruitties
         run: ./gradlew assembleRelease --stacktrace || (echo "Build failed" && exit 1)
 
+      - name: Debug Project Structure
+        working-directory: ./Fruitties
+        run: |
+          echo "Current Directory: $(pwd)"
+          ls -R
+
       - name: Find APK File
         working-directory: ./Fruitties
         run: |
           echo "Searching for APK files..."
           find . -name "*.apk"
-          echo "APK Path: $(pwd)/app/build/outputs/apk/release/"
-          ls -la app/build/outputs/apk/release/
 
       - name: Check APK Exists
         working-directory: ./Fruitties
         run: |
-          if [ ! -f "app/build/outputs/apk/release/*.apk" ]; then
+          if [ ! -f "app/build/outputs/apk/release/app-release.apk" ]; then
             echo "No APK found in the expected path."
             exit 1
           fi
@@ -64,4 +68,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Fruitties-Release.apk
-          path: Fruitties/app/build/outputs/apk/release/*.apk
+          path: Fruitties/app/build/outputs/apk/release/app-release.apk
