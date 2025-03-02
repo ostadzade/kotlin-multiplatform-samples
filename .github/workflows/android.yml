@@ -1,48 +1,33 @@
-name: Build Android APK
+name: Build and Release APK
 
 on:
   push:
-    branches: [main, feature/*]
+    branches:
+      - main
   pull_request:
-
-concurrency:
-  group: build-${{ github.ref }}
-  cancel-in-progress: true
+    branches:
+      - main
 
 jobs:
-  build_android:
-    name: Build and Upload APK
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v3
-
-      - name: Cache Gradle Dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
+          java-version: '17'
           distribution: 'zulu'
-          java-version: 17
 
-      - name: Grant Gradle Permissions
-        working-directory: ./Fruitties/androidApp
-        run: chmod +x ../gradlew
+      - name: Grant Permissions to Gradle Wrapper
+        run: chmod +x ./gradlew
 
       - name: Build Release APK
         working-directory: ./Fruitties/androidApp
-        run: ../gradlew assembleRelease --stacktrace || echo "Build failed, but continuing..."
+        run: ./gradlew assembleRelease
 
       - name: Debug Project Structure
         working-directory: ./Fruitties/androidApp
@@ -55,12 +40,12 @@ jobs:
         working-directory: ./Fruitties/androidApp
         run: |
           echo "Searching for APK files..."
-          APK_PATH=$(find . -name "*.apk" | grep "release")
+          APK_PATH=$(find ./build/outputs/apk/release/ -name "*.apk" | grep "release")
           if [ -z "$APK_PATH" ]; then
             echo "No APK found in the expected path."
             echo "APK_PATH=" >> $GITHUB_ENV
           else
-            APK_PATH=$(realpath "$APK_PATH")  # تبدیل مسیر به مسیر مطلق
+            APK_PATH=$(realpath "$APK_PATH")  # Convert to absolute path
             echo "APK found at: $APK_PATH"
             echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
           fi
