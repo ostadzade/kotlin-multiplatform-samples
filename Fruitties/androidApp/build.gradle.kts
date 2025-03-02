@@ -22,46 +22,51 @@ plugins {
 android {
     namespace = "com.example.fruitties.android"
     compileSdk = 35
+
     defaultConfig {
         applicationId = "com.example.fruitties.android"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2 // افزایش versionCode
+        versionName = "1.1" // افزایش versionName
+
+        signingConfigs {
+            create("release") {
+                storeFile = file("release.keystore")
+                storePassword = "your_store_password"
+                keyAlias = "your_key_alias"
+                keyPassword = "your_key_password"
+            }
+        }
+
+        buildTypes {
+            getByName("release") {
+                signingConfig = signingConfigs.getByName("release")
+                isMinifyEnabled = true
+                isShrinkResources = true
+                proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+                )
+            }
+        }
     }
+
     buildFeatures {
         compose = true
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    buildTypes {
-        getByName("release") {
-            // Enables code shrinking, obfuscation, and optimization for only
-            // your project's release build type. Make sure to use a build
-            // variant with `isDebuggable=false`.
-            isMinifyEnabled = true
 
-            // Enables resource shrinking, which is performed by the
-            // Android Gradle plugin.
-            isShrinkResources = true
-
-            proguardFiles(
-                // Includes the default ProGuard rules files that are packaged with
-                // the Android Gradle plugin. To learn more, go to the section about
-                // R8 configuration files.
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                // Includes a local, custom Proguard rules file
-                "proguard-rules.pro",
-            )
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
