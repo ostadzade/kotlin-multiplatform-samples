@@ -58,10 +58,11 @@ jobs:
           APK_PATH=$(find . -name "*.apk" | grep "release")
           if [ -z "$APK_PATH" ]; then
             echo "No APK found in the expected path."
-            echo "APK_PATH=" >> $GITHUB_ENV  # تنظیم APK_PATH به عنوان خالی
+            echo "APK_PATH=" >> $GITHUB_ENV
           else
+            APK_PATH=$(realpath "$APK_PATH")  # تبدیل مسیر به مسیر مطلق
             echo "APK found at: $APK_PATH"
-            echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV  # تنظیم APK_PATH به مسیر فایل APK
+            echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
           fi
 
       - name: Upload APK Artifact
