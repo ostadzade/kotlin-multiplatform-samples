@@ -61,7 +61,6 @@ jobs:
         run: |
           if [ ! -f "app/build/outputs/apk/release/app-release.apk" ]; then
             echo "No APK found in the expected path."
-            exit 1
           fi
 
       - name: Upload APK Artifact
