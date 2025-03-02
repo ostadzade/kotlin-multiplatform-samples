@@ -37,22 +37,22 @@ jobs:
           java-version: 17
 
       - name: Grant Gradle Permissions
-        working-directory: ./Fruitties
-        run: chmod +x gradlew
+        working-directory: ./Fruitties/androidApp
+        run: chmod +x ../gradlew
 
       - name: Build Release APK
-        working-directory: ./Fruitties
-        run: ./gradlew assembleRelease --stacktrace || echo "Build failed, but continuing..."
+        working-directory: ./Fruitties/androidApp
+        run: ../gradlew assembleRelease --stacktrace || echo "Build failed, but continuing..."
 
       - name: Debug Project Structure
-        working-directory: ./Fruitties
+        working-directory: ./Fruitties/androidApp
         run: |
           echo "Current Directory: $(pwd)"
-          ls -R ./androidApp/build/outputs/apk/release/
+          ls -R ./build/outputs/apk/release/
 
       - name: Find and Check APK File
         id: find_apk
-        working-directory: ./Fruitties
+        working-directory: ./Fruitties/androidApp
         run: |
           echo "Searching for APK files..."
           APK_PATH=$(find . -name "*.apk" | grep "release")
